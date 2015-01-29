@@ -1,0 +1,19 @@
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Location</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Get RStudio URL</th>
+            <!-- instructor? -->
+        <% for course in courses %>
+            <tr>
+                <td><%= course.title %></td>
+                <td><%= course.location %></td>
+                <td><%= course.startdate %></td>
+                <td><%= course.enddate %></td>
+                <td><%= link_to "Get RStudio URL",
+                    :action => "get_url", :id => course.id %></td>
+            </tr>
+        <% end %>
+    </table>

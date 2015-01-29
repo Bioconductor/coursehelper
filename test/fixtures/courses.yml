@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  location: MyString
+  startdate: 2015-01-29
+  enddate: 2015-01-29
+  ami_id: MyString
+  instance_type: MyString
+  max_instances: 1
+
+two:
+  title: MyString
+  location: MyString
+  startdate: 2015-01-29
+  enddate: 2015-01-29
+  ami_id: MyString
+  instance_type: MyString
+  max_instances: 1

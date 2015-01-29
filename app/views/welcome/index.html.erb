@@ -1,0 +1,13 @@
+<% if @todays_courses.nil?  or @todays_courses.empty? %>
+    <p>There are no courses that start today.</p>
+<% else %>
+    <p>Courses that start today:</p>
+    <%= render partial: "course_table", locals: {courses: @todays_courses} %>
+<% end %>
+
+<% if @courses_happening_now.nil? or @courses_happening_now.empty? %>
+    <p>There are no courses going on now.</p>
+<% else %>
+    <p>Courses currently happening:</p>
+    <%= render partial: "course_table", locals: {courses: @courses_happening_now} %>
+<% end %>
