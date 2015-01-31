@@ -10,8 +10,8 @@
 Course.create(title: 'Learn Bioconductor', location: 'Genentech',
     startdate: Date.new(2015,2,2), enddate: Date.new(2015,2,3),
     ami_id: 'ami-b87917d0', instance_type: 'm3.xlarge', 
-    max_instances: 25, password: 'LearnBioCin2015')
+    max_instances: 25, password: 'LearnBioconductorin2015')
 Course.create(title: 'Use Bioconductor', location: 'Genentech',
     startdate: Date.new(2015,2,4), enddate: Date.new(2015,2,4),
     ami_id: 'ami-b87917d0', instance_type: 'm3.xlarge', 
-    max_instances: 25, password: 'UseBioCin2015')
+    max_instances: 25, password: 'UseBioconductorIn2015')

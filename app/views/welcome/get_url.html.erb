@@ -1,7 +1,36 @@
+<script type="text/javascript">
+
+function myvalidator() {
+  document.getElementById("load").style.display='';
+  document.getElementById("submit").style.display='none';
+  document.getElementById("altbutton").style.display='';
+  return true;
+}
+</script>
+<style type="text/css">
+#load{
+position:absolute;
+z-index:1;
+border:3px double #999;
+background:#f7f7f7;
+width:300px;
+height:300px;
+margin-top:-150px;
+margin-left:-150px;
+top:50%;
+left:50%;
+text-align:center;
+line-height:300px;
+font-family:"Trebuchet MS", verdana, arial,tahoma;
+font-size:18pt;
+}
+</style>
+<div id="load" style="display:none;">Loading... Please wait</div>
+
+
 <%= form_tag "/get_url/#{course_id}"  do -%>
 
-  <p>Please enter your email address. FHCRC employees, please 
-    enter your email with the <b>fredhutch.org</b> domain.</p>
+  <p>Please enter your email address.</p>
   <p>
     <%= label_tag "Email Address" %><br>
     <%= text_field_tag "email", nil, size: 40 %>
@@ -13,8 +42,11 @@
   </p>
 
 
+ <p>Clicking <i>Submit</i> will start an instance for you (or show a link to your instance if it 
+  has already been created). This may take a few moments. </p>
  
   <p>
-    <%= submit_tag "Submit" %>
+    <%= submit_tag "Submit", onclick: "return myvalidator();", id: "submit" %>
+    <button disabled type="button" id="altbutton" style="display:none;">Please wait...</button>
   </p>
 <% end -%>

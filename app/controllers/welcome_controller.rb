@@ -8,8 +8,7 @@ class WelcomeController < ApplicationController
         Course.where("startdate <= :today and enddate >= :today", {today: Date.today})
   end
 
-  def get_instance(email, course, rec=nil)
-    # need to know access key, secret key, security group name, key pair name
+  def get_instance(email, course)
     config = YAML.load_file("#{Rails.root}/config.yml")
     ec2 = AWS::EC2.new(:access_key_id => config['access_key_id'],
       :secret_access_key => config['secret_access_key'])
@@ -17,6 +16,9 @@ class WelcomeController < ApplicationController
       count: 1, key_name: config['key_pair'],
       security_groups: config['security_group'])
     instance.tag('Name', value: "Attending '#{course.title}', #{course.location}, #{course.startdate}-#{course.enddate} (#{email})")
+    instance.tag("Email", value: email)
+    instance.tag("CourseId", value: course.id) # for easy group termination
+
     while instance.status == :pending
       sleep 1
     end
@@ -31,23 +33,39 @@ class WelcomeController < ApplicationController
       render :get_url, locals: {course_id: params[:id]}
       #course = Course.find(params[:id])
     elsif request.post?
+      Rails.logger.info "in post of get_url"
+      if params[:email].empty? or params[:password].empty?
+        render(text: "email and password can't be blank") and return
+      end
+      unless params[:email] =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
+        render(text: "invalid email address") and return
+      end
+      today = Date.today
       course = Course.find(params[:id])
+      if (course.enddate < today or course.startdate > today)
+        render(text: "course is not happening or starting soon") and return
+      end
       unless course.password == params[:password]
         render(:text => "sorry, wrong password") and return
       end
       email = params[:email].downcase
+      #email.sub! "fhcrc.org", "fredhutch.org"
       rec = Attendee.find_by_email(email)
+      instance = nil
       if rec.nil?
-        render :text => "u r not sined upp" and return
+        instance = get_instance(email, course)
+        rec = Attendee.create(email: email, course_id: course.id, instance_id: instance.instance_id,
+          public_dns: instance.public_dns_name)
       else
         if rec.public_dns.nil?
-        else
-        render("get_url_post", locals: {url: "http://#{rec.public_dns}",
-          enddate: course.enddate}) and return
+          instance = get_instance(email, course)
+          rec.public_dns = instance.public_dns_name
+          rec.instance_id = instance.instance_id
+          rec.save
         end
       end
-      render(:text => "hi! #{params[:id]}") and return
-
+      render("get_url_post", locals: {url: "http://#{rec.public_dns}",
+        enddate: course.enddate}) and return
     end
   end
 
