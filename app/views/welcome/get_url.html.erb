@@ -1,24 +1,20 @@
-<%= form_for :attendee do |f| %>
-  <p>
-    <%= f.label "First Name" %><br>
-    <%= f.text_field :firstname %>
-  </p>
- 
+<%= form_tag "/get_url/#{course_id}"  do -%>
 
+  <p>Please enter your email address. FHCRC employees, please 
+    enter your email with the <b>fredhutch.org</b> domain.</p>
   <p>
-    <%= f.label "Last Name" %><br>
-    <%= f.text_field :lastname %>
+    <%= label_tag "Email Address" %><br>
+    <%= text_field_tag "email", nil, size: 40 %>
   </p>
 
-
   <p>
-    <%= f.label "Email Address" %><br>
-    <%= f.text_field :email %>
+    <%= label_tag "Course Password" %><br>
+    <%= password_field_tag "password" %>
   </p>
 
 
  
   <p>
-    <%= f.submit "Submit" %>
+    <%= submit_tag "Submit" %>
   </p>
-<% end %>
+<% end -%>

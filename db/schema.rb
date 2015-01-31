@@ -11,11 +11,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150129233849) do
+ActiveRecord::Schema.define(version: 20150130221110) do
 
   create_table "attendees", force: :cascade do |t|
-    t.string   "firstname"
-    t.string   "lastname"
     t.integer  "course_id"
     t.string   "email"
     t.boolean  "is_admin"
@@ -23,6 +21,7 @@ ActiveRecord::Schema.define(version: 20150129233849) do
     t.string   "instance_id"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.string   "public_dns"
   end
 
   add_index "attendees", ["course_id"], name: "index_attendees_on_course_id"
@@ -37,6 +36,7 @@ ActiveRecord::Schema.define(version: 20150129233849) do
     t.integer  "max_instances"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.string   "password"
   end
 
 end

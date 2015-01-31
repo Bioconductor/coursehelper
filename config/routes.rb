@@ -11,6 +11,8 @@ root 'welcome#index'
   #   get 'products/:id' => 'catalog#view'
 
 get 'get_url/:id' => 'welcome#get_url'
+post 'get_url/:id' => 'welcome#get_url'
+
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
