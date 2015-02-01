@@ -13,6 +13,7 @@ class WelcomeController < ApplicationController
     ec2 = AWS::EC2.new(:access_key_id => config['access_key_id'],
       :secret_access_key => config['secret_access_key'])
     instance = ec2.instances.create(image_id: course.ami_id,
+      instance_type: course.instance_type,
       count: 1, key_name: config['key_pair'],
       security_groups: config['security_group'])
     instance.tag('Name', value: "Attending '#{course.title}', #{course.location}, #{course.startdate}-#{course.enddate} (#{email})")
@@ -31,7 +32,6 @@ class WelcomeController < ApplicationController
   def get_url
     if request.get?
       render :get_url, locals: {course_id: params[:id]}
-      #course = Course.find(params[:id])
     elsif request.post?
       Rails.logger.info "in post of get_url"
       if params[:email].empty? or params[:password].empty?
