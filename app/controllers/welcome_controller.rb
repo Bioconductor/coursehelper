@@ -3,9 +3,9 @@ require 'aws-sdk'
 
 class WelcomeController < ApplicationController
   def index
-    @todays_courses = Course.where("is_visible = :true and startdate = :today", {today: Date.today, true: true})
+    @todays_courses = Course.where("is_visible is not :false and startdate = :today", {today: Date.today, false: false})
     @courses_happening_now = 
-        Course.where("is_visible = :true and startdate <= :today and enddate >= :today", {today: Date.today, true: true})
+        Course.where("is_visible is not :false and startdate <= :today and enddate >= :today", {today: Date.today, false: false})
   end
 
   def get_instance(email, course)
