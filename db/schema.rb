@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150203172546) do
+ActiveRecord::Schema.define(version: 20150611194931) do
 
   create_table "attendees", force: :cascade do |t|
     t.integer  "course_id"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20150203172546) do
     t.datetime "updated_at",    null: false
     t.string   "password"
     t.boolean  "is_visible"
+    t.string   "gmt_offset"
   end
 
 end

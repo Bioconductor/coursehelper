@@ -3,7 +3,19 @@ require 'aws-sdk'
 
 class WelcomeController < ApplicationController
   def index
-    @todays_courses = Course.where("is_visible is not :false and startdate = :today", {today: Date.today, false: false})
+    #@todays_courses = Course.where("is_visible is not :false and startdate = :today", {today: Date.today, false: false})
+    all_courses = Course.where("is_visible is not :false", {false: false})
+    local = DateTime.now
+    @todays_courses = all_courses.find_all do |i|
+      offset = i.gmt_offset
+      if i.nil?
+        today = Date.now
+      else
+        today = local.new_offset(Rational(utc_offset,24)).to_date
+      end
+
+    end
+
     @courses_happening_now = 
         Course.where("is_visible is not :false and startdate <= :today and enddate >= :today", {today: Date.today, false: false})
   end

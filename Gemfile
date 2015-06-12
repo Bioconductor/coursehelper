@@ -36,6 +36,7 @@ gem 'pry'
 gem 'aws-sdk-core'
 gem 'aws-sdk'
 gem 'therubyracer'
+gem 'pry-rails', :group => :development
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
