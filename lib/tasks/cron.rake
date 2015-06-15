@@ -8,7 +8,7 @@ require 'rails'
 # not sure exactly what that looks like
 
 # The below task needs to run at 55 minutes past the hour,
-# every hour. (currently doesn't-- FIXME!)
+# every hour. 
 
 desc "stop all instances for courses that end today"
 task :course_shutdown => :environment do
