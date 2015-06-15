@@ -8,16 +8,40 @@ class WelcomeController < ApplicationController
     local = DateTime.now
     @todays_courses = all_courses.find_all do |i|
       offset = i.gmt_offset
-      if i.nil?
-        today = Date.now
+      if offset.nil?
+        now = DateTime.now
+        today = Date.today
       else
-        today = local.new_offset(Rational(utc_offset,24)).to_date
+        now = local.new_offset(Rational(offset,24))
+        today = now.to_date
       end
-
+      if i.startdate == today or (today == (i.startdate() -1) and now.hour >= 20)
+        true
+      else
+        false
+      end
     end
 
-    @courses_happening_now = 
-        Course.where("is_visible is not :false and startdate <= :today and enddate >= :today", {today: Date.today, false: false})
+    # @courses_happening_now = 
+    #     Course.where("is_visible is not :false and startdate <= :today and enddate >= :today", {today: Date.today, false: false})
+    @courses_happening_now = all_courses.find_all do |i|
+      offset = i.gmt_offset
+      if offset.nil?
+        now = DateTime.now
+        today = Date.today
+      else
+        now = local.new_offset(Rational(offset,24))
+        today = now.to_date
+      end
+      unless offset.nil?
+#        require 'pry';binding.pry
+      end
+      if i.startdate <= today and i.enddate >= today
+        true
+      else
+        false
+      end
+    end    
   end
 
   def get_instance(email, course)
