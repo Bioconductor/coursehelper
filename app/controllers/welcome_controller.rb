@@ -65,6 +65,23 @@ class WelcomeController < ApplicationController
     instance
   end
 
+  def is_course_starting_or_happening? (course)
+    local = DateTime.now
+    offset = course.gmt_offset
+    if offset.nil?
+      now = DateTime.now
+      today = Date.today
+    else
+      now = local.new_offset(Rational(offset,24))
+      today = now.to_date
+    end
+    if course.startdate == today or (today == (course.startdate() -1) and now.hour >= 20)
+      true
+    else
+      false
+    end
+  end
+
   def get_url
     if request.get?
       render :get_url, locals: {course_id: params[:id]}
@@ -78,7 +95,7 @@ class WelcomeController < ApplicationController
       end
       today = Date.today
       course = Course.find(params[:id])
-      if (course.enddate < today or course.startdate > today)
+      unless (is_course_starting_or_happening? course)
         render(text: "course is not happening or starting soon") and return
       end
       unless course.password == params[:password]
