@@ -122,7 +122,8 @@ class WelcomeController < ApplicationController
         end
       end
       render("get_url_post", locals: {url: "http://#{rec.public_dns}",
-        enddate: course.enddate}) and return
+        enddate: course.enddate,
+        shellinabox_url: "http://#{rec.public_dns}:4200"}) and return
     end
   end
 
