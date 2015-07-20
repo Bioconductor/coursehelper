@@ -10,6 +10,10 @@ require 'rails'
 # The below task needs to run at 55 minutes past the hour,
 # every hour. 
 
+# Here's an example crontab entry (adjust paths to taste):
+# 55 * * * * cd /home/www-data/coursehelper && /bin/bash -lc "RAILS_ENV=production bin/rake course_shutdown"  >> log/rake.log 2>&1
+
+
 desc "stop all instances for courses that end today"
 task :course_shutdown => :environment do
   config = YAML.load_file("#{Rails.root}/config.yml")
