@@ -75,7 +75,8 @@ class WelcomeController < ApplicationController
       now = local.new_offset(Rational(offset,24))
       today = now.to_date
     end
-    if course.startdate == today or (today == (course.startdate() -1) and now.hour >= 20)
+    if (today >= course.startdate and today <= course.enddate) or
+      (today == (course.startdate() -1) and now.hour >= 20)
       true
     else
       false
