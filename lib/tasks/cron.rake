@@ -17,8 +17,8 @@ require 'rails'
 desc "stop all instances for courses that end today"
 task :course_shutdown => :environment do
   config = YAML.load_file("#{Rails.root}/config.yml")
-  ec2 = AWS::EC2.new(:access_key_id => config['access_key_id'],
-    :secret_access_key => config['secret_access_key'])
+  # ec2 = AWS::EC2.new(:access_key_id => config['access_key_id'],
+  #   :secret_access_key => config['secret_access_key'])
   today = Date.today
   all_courses = Course.where("is_visible is not :false", {false: false})
   local = DateTime.now
@@ -42,6 +42,15 @@ task :course_shutdown => :environment do
   for course in courses
     attendees = course.attendees
     puts "Course #{course.title} has #{attendees.length} attendees."
+    if course.region.nil?
+      region = config['region']
+    else
+      region = course.region
+    end
+    ec2 = AWS::EC2.new(:region => region,
+      :access_key_id => config['access_key_id'],
+      :secret_access_key => config['secret_access_key'])
+
     for attendee in attendees
       puts "Shutting down instance for attendee #{attendee.email}."
       ec2.instances[attendee.instance_id].terminate

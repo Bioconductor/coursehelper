@@ -46,7 +46,13 @@ class WelcomeController < ApplicationController
 
   def get_instance(email, course)
     config = YAML.load_file("#{Rails.root}/config.yml")
-    ec2 = AWS::EC2.new(:access_key_id => config['access_key_id'],
+    if course.region.nil?
+      region = config['region']
+    else
+      region = course.region
+    end
+    ec2 = AWS::EC2.new(:region => region,
+      :access_key_id => config['access_key_id'],
       :secret_access_key => config['secret_access_key'])
     instance = ec2.instances.create(image_id: course.ami_id,
       instance_type: course.instance_type,
@@ -55,6 +61,13 @@ class WelcomeController < ApplicationController
     instance.tag('Name', value: "Attending '#{course.title}', #{course.location}, #{course.startdate}-#{course.enddate} (#{email})")
     instance.tag("Email", value: email)
     instance.tag("CourseId", value: course.id) # for easy group termination
+
+    begin
+      puts "instance status is #{instance.status}"
+    rescue
+      puts "could not determine instance status"
+      sleep 1
+    end
 
     while instance.status == :pending
       sleep 1
