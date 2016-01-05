@@ -125,8 +125,8 @@ be started in a region closer to the attendees so
 latency should be lower and perceived
 performance should be better. In order for this to work,
 you **must** 
-[copy your AMI to the target region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/CopyingAMIs.html)
-in order for this to work. Note that after copying, the copied
+[copy your AMI to the target region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/CopyingAMIs.html).
+Note that after copying, the copied
 AMI in the destination region has a new AMI-ID and this
 is what you should use when adding the course record above.
 This feature has **not** been extensively tested so you
