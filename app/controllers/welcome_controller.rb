@@ -47,7 +47,11 @@ class WelcomeController < ApplicationController
   def get_instance(email, course)
     config = YAML.load_file("#{Rails.root}/config.yml")
     if course.region.nil?
-      region = config['region']
+      if config.has_key? 'region'
+        region = config['region']
+      else
+        region = 'us-east-1'
+      end
     else
       region = course.region
     end
