@@ -176,9 +176,30 @@ they will need to access that instance. (If they have already
 started a instance, it will return the URL previously
 started by the user with that email.)
 
+It's really important that attendees only use the URL
+given to them by the app, not the one they see their
+neighbor (or the teacher) using. Using someone else's
+URL will disable access for that other user.
+
 For the convenience of teachers and others who are helping
 with the course, you can retrieve your URL starting at 8PM
 the night before the course.
+
+## Modifying all instances during the course
+
+We try and avoid this but sometimes it happens that every instance
+needs to be updated with some software, after the course is 
+underway and people have already started their instances.
+
+There's some code to do these updates in parallel. 
+You need to get a list of the instance IDs that need
+to be updated. This is not (yet) documented but can be
+accomplished with the `aws` command line client plus
+basic tools like `cut`, `sed`, etc. 
+Come up with a one-line script to do the update.
+Then use [ec2_hot_update](https://github.com/dtenenba/ec2_hot_update)
+to run that script on all instances in parallel.
+
 
 ## After the course
 
