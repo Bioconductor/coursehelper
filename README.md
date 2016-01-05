@@ -99,7 +99,10 @@ You can run the console like this:
 
 Then create a new course. Here's an example with example values:
 
-    new_course = Course.new(title: "Advanced R/Bioconductor", location: "Buffalo, NY", startdate: "2016-02-21", enddate: "2016-02-23", ami_id: "ami-11223344", instance_type: "t2.large", max_instances: 20, password: "supersecretpassword", gmt_offset: "-5")
+    new_course = Course.new(title: "Advanced R/Bioconductor", location: 
+    "Buffalo, NY", startdate: "2016-02-21", enddate: "2016-02-23", ami_id: 
+    "ami-11223344", instance_type: "t2.large", max_instances: 20, password:
+    "supersecretpassword", gmt_offset: "-5")
     new_course.save()
     exit
 
