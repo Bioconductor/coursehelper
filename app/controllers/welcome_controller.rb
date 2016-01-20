@@ -121,7 +121,7 @@ class WelcomeController < ApplicationController
       end
       email = params[:email].downcase
       #email.sub! "fhcrc.org", "fredhutch.org"
-      rec = Attendee.where(email: email).where(course_id: course.id).find_each do |user|
+      Attendee.where(email: email).where(course_id: course.id).find_each do |rec|
         render("get_url_post", locals: {url: "http://#{rec.public_dns}",
           enddate: course.enddate,
           shellinabox_url: "http://#{rec.public_dns}:4200"}) and return
