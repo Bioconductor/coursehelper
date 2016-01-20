@@ -53,6 +53,12 @@ It is checked out in `www-data`'s  home directory, in
 The Ruby dependencies of the app are declared in the
 [Gemfile](Gemfile).
 
+### Deploying changes to the app
+
+It is not enough to simply do `git pull` on production. You also need to 
+`touch tmp/restart.txt` in order to tell rails to use the latest changes.
+
+
 ## Building a course AMI
 
 Generally this involves the following steps:
