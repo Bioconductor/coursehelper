@@ -132,7 +132,7 @@ class WelcomeController < ApplicationController
       if count >= course.max_instances
         render(text: "Already started #{course.max_instances} instances for this course.") and return
       end
-      rec = Attendee.find_by_email(email)
+      rec = Attendee.where(email: email).where(course_id: course.id).first
       instance = nil
       if rec.nil?
         instance = get_instance(email, course)
