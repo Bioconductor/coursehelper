@@ -1,16 +1,27 @@
 # Course Helper Application
 
+## Table of Contents
+
+- [App overview](#overview)
+- [App hosting and administration](#hosting)
+    - [Deploying changes](#changes)
+- [Building a course AMI](#buildAMI)
+    - [Adding a course](#addCourse)
+    - [Updating a course](#updateCourse)
+- [End user usage](#userUsage)
+- [Modifying all instances during a course](#modifyDuringCourse)
+- [After a course](#afterCourse)
+
+<a name="overview"></a>
+## Overview
+
 This is a [rails](http://rubyonrails.org/) application.
 
 App URL: [https://courses.bioconductor.org/](https://courses.bioconductor.org/)
 
 It is meant to facilitate using Amazon Machine Images (AMIs) to
-teach Bioconductor courses.
-
-It manages individual AMI instances for each course attendee and
+teach Bioconductor courses. It manages individual AMI instances for each course attendee and
 automatically shuts off the instances when the course is over.
-
-## What the app does
 
 You give the app some basic information about the course.
 Then, on the first day of the course (actually the night before)
@@ -31,10 +42,8 @@ Before this app existed, we would tediously print out slips of
 paper with the urls and pass them out, and this involved
 typing and making mistakes.
 
-
-
-
-## App Hosting/Administration
+<a name="hosting"></a>
+## Hosting and Administration
 
 The app is hosted on habu, inside the fhcrc network.
 
@@ -53,12 +62,13 @@ It is checked out in `www-data`'s  home directory, in
 The Ruby dependencies of the app are declared in the
 [Gemfile](Gemfile).
 
-### Deploying changes to the app
+<a name="changes"></a>
+### Deploying changes
 
 It is not enough to simply do `git pull` on production. You also need to 
 `touch tmp/restart.txt` in order to tell rails to use the latest changes.
 
-
+<a name="buildAMI"></a>
 ## Building a course AMI
 
 Generally this involves the following steps:
@@ -74,6 +84,7 @@ Generally this involves the following steps:
   of times as the course material evolves. Be sure and
   de-register intermediate AMIs to save space.
 
+<a name="addCourse"></a>
 ## Adding a course
 
 When a course is scheduled, you should find out the following
@@ -139,7 +150,7 @@ This feature has **not** been extensively tested so you
 should confirm it works before using it, perhaps by creating
 a dummy course.
 
-
+<a name="updateCourse"></a>
 ## Updating a course
 
 Again you do this through the console:
@@ -165,8 +176,8 @@ Once you have retrieved the course, you can modify it and then resave it:
     course.save
     exit
 
-
-## End User usage of the app
+<a name="userUsage"></a>
+## End user usage
 
 On the day the course starts,
 all attendees should be told to go to the app URL,
@@ -194,7 +205,8 @@ For the convenience of teachers and others who are helping
 with the course, you can retrieve your URL starting at 8PM
 the night before the course.
 
-## Modifying all instances during the course
+<a name="modifyDuringCourse"></a>
+## Modifying all instances during a course
 
 We try and avoid this but sometimes it happens that every instance
 needs to be updated with some software, after the course is 
@@ -209,7 +221,7 @@ Come up with a one-line script to do the update.
 Then use [ec2_hot_update](https://github.com/dtenenba/ec2_hot_update)
 to run that script on all instances in parallel.
 
-
+<a name="afterCourse"></a>
 ## After the course
 
 The app should shut down all instances associated with the course
