@@ -11,6 +11,8 @@
 - [End user usage](#userUsage)
 - [Modifying all instances during a course](#modifyDuringCourse)
 - [After a course](#afterCourse)
+    - [Shut down instances](#shutdown)
+    - [Post course materials](#postMaterials)
 
 <a name="overview"></a>
 ## Overview
@@ -224,6 +226,9 @@ to run that script on all instances in parallel.
 <a name="afterCourse"></a>
 ## After the course
 
+<a name="shutdown"></a>
+## Shut down instances
+
 The app should shut down all instances associated with the course
 at 23:55 on the last day of the course. This is done via the
 following cron job:
@@ -235,3 +240,9 @@ following cron job:
 It works, but you should still doublecheck that it worked so we 
 don't have to pay lots of money for unused instances.
 
+<a name="postMaterials"></a>
+## Post course materials
+
+Post the course AMI and any related materials to the web site following instructions here:
+
+https://github.com/Bioconductor/bioconductor.org/blob/master/README.md#adding-course-material-to-the-spreadsheet
