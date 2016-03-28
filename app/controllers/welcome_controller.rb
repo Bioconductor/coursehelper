@@ -22,7 +22,7 @@ class WelcomeController < ApplicationController
       end
     end
 
-    # @courses_happening_now = 
+    # @courses_happening_now =
     #     Course.where("is_visible is not :false and startdate <= :today and enddate >= :today", {today: Date.today, false: false})
     @courses_happening_now = all_courses.find_all do |i|
       offset = i.gmt_offset
@@ -41,7 +41,7 @@ class WelcomeController < ApplicationController
       else
         false
       end
-    end    
+    end
   end
 
   def get_instance(email, course)
@@ -58,13 +58,19 @@ class WelcomeController < ApplicationController
     ec2 = AWS::EC2.new(:region => region,
       :access_key_id => config['access_key_id'],
       :secret_access_key => config['secret_access_key'])
-    instance = ec2.instances.create(image_id: course.ami_id,
-      instance_type: course.instance_type,
-      count: 1, key_name: config['key_pair'],
-      security_groups: config['security_group'])
+    options = {
+      image_id: course.ami_id,
+        instance_type: course.instance_type,
+        count: 1, key_name: config['key_pair'],
+        security_groups: config['security_group']
+    }
+    if config.has_key? "subnet"
+      options['subnet'] = config['subnet']
+    end
+    instance = ec2.instances.create(options)
     instance.tag('Name', value: "Attending '#{course.title}', #{course.location}, #{course.startdate}-#{course.enddate} (#{email})")
     instance.tag("Email", value: email)
-    instance.tag("CourseId", value: course.id) # for easy group termination
+    instance.tag("CourseId", value: course.id)
 
     begin
       puts "instance status is #{instance.status}"
@@ -125,7 +131,7 @@ class WelcomeController < ApplicationController
         render("get_url_post", locals: {url: "http://#{rec.public_dns}",
           enddate: course.enddate,
           shellinabox_url: "http://#{rec.public_dns}:4200"}) and return
-      end        
+      end
 
 
       count = Attendee.where(course_id: course.id).length
