@@ -65,7 +65,7 @@ class WelcomeController < ApplicationController
         security_groups: config['security_group']
     }
     if config.has_key? "subnet"
-      options['subnet'] = config['subnet']
+      options[:subnet] = config['subnet']
     end
     instance = ec2.instances.create(options)
     instance.tag('Name', value: "Attending '#{course.title}', #{course.location}, #{course.startdate}-#{course.enddate} (#{email})")
