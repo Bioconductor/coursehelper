@@ -28,13 +28,13 @@ automatically shuts off the instances when the course is over.
 You give the app some basic information about the course.
 Then, on the first day of the course (actually the night before)
 you can go to the [app url](https://courses.bioconductor.org/)
-and enter your email address and a password(*) and you will get
+and enter your email address and a password(_*_) and you will get
 your very own EC2 instance and a URL to RStudio Server
 (and possibly shellinabox) on that instance. If you forget
 your URL, you can go back to the app and it will tell you
-your url. 
+your url.
 
-* = The password should be written down on the whiteboard
+_*_ = The password should be written down on the whiteboard
 in the room where the course is taking place. This ensures
 that only legitimate course attendees can register.
 
@@ -47,19 +47,19 @@ typing and making mistakes.
 <a name="hosting"></a>
 ## Hosting and Administration
 
-The app is hosted on habu, inside the fhcrc network.
+The app is hosted on an AWS instance called `courses.bioconductor.org`.
 
 To administer it:
 
-    ssh www-data@habu
-    cd coursehelper
+    ssh www-data@courses.bioconductor.org
+    cd app
 
 Your public key should be installed there, if not, please ask.
 
 The app code lives in [https://github.com/Bioconductor/coursehelper](https://github.com/Bioconductor/coursehelper).
 
-It is checked out in `www-data`'s  home directory, in 
-`~/coursehelper`.
+It is checked out in `www-data`'s  home directory, in
+`~/app`.
 
 The Ruby dependencies of the app are declared in the
 [Gemfile](Gemfile).
@@ -67,7 +67,7 @@ The Ruby dependencies of the app are declared in the
 <a name="changes"></a>
 ### Deploying changes
 
-It is not enough to simply do `git pull` on production. You also need to 
+It is not enough to simply do `git pull` on production. You also need to
 `touch tmp/restart.txt` in order to tell rails to use the latest changes.
 
 <a name="buildAMI"></a>
@@ -104,13 +104,13 @@ as soon as possible:
   that will be required for the course?
 
 Once you have gathered all this information, you can create a
-record for the course in the app database. You do this with the 
-Rails console. 
+record for the course in the app database. You do this with the
+Rails console.
 
-Again, assuming you are on habu:
+Again, assuming you are on courses.bioconductor.org:
 
-    ssh www-data@habu
-    cd coursehelper
+    ssh www-data@courses.bioconductor.org
+    cd app
 
 You can run the console like this:
 
@@ -118,8 +118,8 @@ You can run the console like this:
 
 Then create a new course. Here's an example with example values:
 
-    new_course = Course.new(title: "Advanced R/Bioconductor", location: 
-    "Buffalo, NY", startdate: "2016-02-21", enddate: "2016-02-23", ami_id: 
+    new_course = Course.new(title: "Advanced R/Bioconductor", location:
+    "Buffalo, NY", startdate: "2016-02-21", enddate: "2016-02-23", ami_id:
     "ami-11223344", instance_type: "t2.large", max_instances: 20, password:
     "supersecretpassword", gmt_offset: "-5")
     new_course.save()
@@ -138,12 +138,12 @@ that's where most courses used to be taught.
 
 Note that there is also a `region` parameter which you can
 set to an [AWS region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
-If the course is to be taught in a far-flung region 
+If the course is to be taught in a far-flung region
 like Australia or Japan, this will mean the instances will
-be started in a region closer to the attendees so 
+be started in a region closer to the attendees so
 latency should be lower and perceived
 performance should be better. In order for this to work,
-you **must** 
+you **must**
 [copy your AMI to the target region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/CopyingAMIs.html).
 Note that after copying, the copied
 AMI in the destination region has a new AMI-ID and this
@@ -160,7 +160,7 @@ Again you do this through the console:
     rails console production
 
 
- You can list all courses with 
+ You can list all courses with
 
      Course.all
 
@@ -211,14 +211,14 @@ the night before the course.
 ## Modifying all instances during a course
 
 We try and avoid this but sometimes it happens that every instance
-needs to be updated with some software, after the course is 
+needs to be updated with some software, after the course is
 underway and people have already started their instances.
 
-There's some code to do these updates in parallel. 
+There's some code to do these updates in parallel.
 You need to get a list of the instance IDs that need
 to be updated. This is not (yet) documented but can be
 accomplished with the `aws` command line client plus
-basic tools like `cut`, `sed`, etc. 
+basic tools like `cut`, `sed`, etc.
 Come up with a one-line script to do the update.
 Then use [ec2_hot_update](https://github.com/dtenenba/ec2_hot_update)
 to run that script on all instances in parallel.
@@ -237,7 +237,7 @@ following cron job:
 
  (It runs at every hour but the logic figures out if it is the right
  hour in the course time zone.)
-It works, but you should still doublecheck that it worked so we 
+It works, but you should still doublecheck that it worked so we
 don't have to pay lots of money for unused instances.
 
 <a name="postMaterials"></a>
