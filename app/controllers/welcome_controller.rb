@@ -142,8 +142,9 @@ class WelcomeController < ApplicationController
       instance = nil
       if rec.nil?
         instance = get_instance(email, course)
+        dns = (instance.public_dns_name.nil?) ? instance.public_ip_address : instance.public_dns_name
         rec = Attendee.create(email: email, course_id: course.id, instance_id: instance.instance_id,
-          public_dns: instance.public_dns_name)
+          public_dns: dns)
       else
         if rec.public_dns.nil?
           instance = get_instance(email, course)
