@@ -5,7 +5,11 @@
 - [App overview](#overview)
 - [App hosting and administration](#hosting)
     - [Deploying changes](#changes)
-- [Building a course AMI](#buildAMI)
+- [Building or Updating a course AMI](#buildAMI)
+    - [Launch AMI of Interest](#launchAMI)
+    - [Update New Instance](#updateInst)
+    - [Clone and Clean Up](#cloneNclean)
+    - [Testing Rstudio](#testR)
     - [Adding a course](#addCourse)
     - [Updating a course](#updateCourse)
 - [End user usage](#userUsage)
@@ -71,20 +75,98 @@ It is not enough to simply do `git pull` on production. You also need to
 `touch tmp/restart.txt` in order to tell rails to use the latest changes.
 
 <a name="buildAMI"></a>
-## Building a course AMI
+## Building or Updating a course AMI 
 
-Generally this involves the following steps:
+This is going to assume that instead of directly modifying the existing course AMI that the desired result is to clone the AMI, update it, and add the new `ami_id` to the course. 
+**Remember:** This process may be iterated a number of times depending on how materials evolve or are updated.  It is important to always de-register (delete) intermediate AMIs and terminate intermediate Instances. 
 
-* Locate all course materials
-* Determine whether the course will use Bioconductor release or devel
-* Instantiate one of the standard
-  [Bioconductor AMIs](http://www.bioconductor.org/help/bioconductor-cloud-ami/#ami_ids). Install all necessary course materials on it.
-* Update all R packages on the AMI by calling `biocLite()` without
-  arguments. If R itself is outdated you might update it as well.
-* Save this instance as a new AMI and make a note of the AMI.
-* You may need to iterate on this process a couple
-  of times as the course material evolves. Be sure and
-  de-register intermediate AMIs to save space.
+<a name="launchAMI"></a>
+#### 1. Launch Existing AMI Of Interest
+
+Log on to the AWS Management Console at:
+
+`https://aws.amazon.com/console` 
+
+1. Select EC2 (Virtual Servers in the Cloud). 
+2. On the left tool bar, under Images, select AMIs.  
+3. Launch the AMI of Interest. Make sure you have an AMI with the appropriate versions of R and Bioconductor. (See [Bioconductor AMIs](http://bioconductor.org/help/bioconductor-cloud-ami/#ami_ids)).
+**Note:** Before launching, you should have an idea of the [InstanceType](https://aws.amazon.com/ec2/instance-types/) and generally you will want to have a [key pair set up](http://bioconductor.org/help/bioconductor-cloud-ami/#first-time-steps).
+  
+  \>Follow the prompts and after each step select `Next: ...` in the lower right corner
+  
+    1. Choose instance type
+    2. Configure Instances. This section is generally okay as is. 
+    3. Storage. This section is generally okay as is. 
+       (For large conferences you may have to increase the storage)
+    4. Tag Instance. Select a Name and Value for the instance.  
+       Generally a good practice to also include the date: YearMonthDayTime. 
+       If utilizing similar naming to previous AMI, it acts as an internal time stamp.
+    5. Security. Under `Assign a security group:` choose `Select an existing security group`  
+       Especially when setting up for a course or workshop, Select the following items:  
+         1. name: `http-to-the-world` description: `port 80 open to world` (this is needed by rstudio)
+         2. name: `ssh` description: `ips that are allowed to ssh to instances`
+    6. Review and Launch.  
+       Generally, launch with existing key pair. 
+       You should have access to the private key associated with the public key pair selected.  
+4. Click on the instance id that appears when launching 
+5. Copy the **IP** address 
+
+
+Don't sign out of the AWS console; we will be returning.  
+
+<a name="updateInst"></a>
+#### 2. Update New Instance 
+
+Now that an instance has been created, we will use a terminal to update the information on that instance. 
+
+1. Open a terminal 
+2. ssh into the instance:  
+   ssh -i \<keypair\> ubuntu\@**IP**  
+   The \<keypair\> should be the private key matching to the key pair used when launching in the previous section and the **IP** is the copied **IP** address from step 5 of the previous section
+3. Switch to root.  `sudo -s`
+4. Update the information as necessary.  
+    e.g. clone course material, cd into a course directory and update, if necessary build and install course packages
+5. Make sure all R packages are updated.  
+    1. `R`
+    2. `biocLite()` 
+    3. `q()`  Do not save workspace!!* 
+6. `clean_ami`
+7. Exit the ssh instance.
+8. Exit the terminal.
+
+\* **Note:** If you save the workspace, all rstudio sessions launched with this AMI will have that saved workspaced. In generally it is a better practice to have a clean rstudio session by not saving the workspace and loading libraries and objects as needed when utilizing the AMI.  
+
+<a name="cloneNclean"></a>
+#### 3. Clone and Clean Up 
+
+Now we must go back to the AWS console. 
+
+1. On the left tool bar, under Instances, select Instances
+2. Select the newly made instance 
+3. Under Actions, Under Instance State, select `Stop`
+4. Once the instance State shows that it is stopped,  
+   Under Actions, Under Image, select `Create Image`  
+   Follow prompt:  
+     Image Name (Best practice is to include time stamp: YearMonthDayTime)  
+     Create Image  
+     Close  
+5. On the left tool bar, under Images, select AMIs
+6. What until the New AMI is done being created, and shows a Status of available. Then copy the `AMI ID` field for that new AMI. If updating a previously existing course, this `ami_id` should be used when [Updating a course](#updateCourse)
+7. On the left tool bar, go back to Instances, Instances 
+8. Select the newly created instance
+9. (optional) Under Actions, Under Instance State, select `Terminate`. If you think you will run the instance again you can leave the instance in a `Stop` state instead of terminating but it is not recommended to leave intermediate AMIs and instances, for cost and space efficiency. You can also restart the instance for testing purposes (see below)
+
+We are now done on the AWS site. 
+
+<a name="testR"></a>
+#### 4. Testing (optional)
+
+It is not a bad idea to test the AMI created to make sure your rstudio has everything anticipated.  However, be mindful of how many times you do this as there may be a cost involved. 
+
+To test an rstudio session there are two options: 
+
+1. See the previous section on [Launching Existing AMI of Interest](#launchAMI). Once you have the **IP** address, you can copy and paste that **IP** address into a web browser. It should open an rstudio session. 
+2. Alternately, if you still have an instance of the AMI created, you can also go to Instances, Under Instances in the left tool bar and click on the newly created instance. If the instance is in an instant state of `stopped`, go under Actions, under Instant State, and select `Start`. On the bottom of the page there is information about the instance. The **IP** address listed can be copied in a web browser to launch the rstudio session. Don't forget to stop your instance when you are finished.       
 
 <a name="addCourse"></a>
 ## Adding a course
@@ -155,7 +237,12 @@ a dummy course.
 <a name="updateCourse"></a>
 ## Updating a course
 
-Again you do this through the console:
+Again, assuming you are on courses.bioconductor.org:
+
+    ssh www-data@courses.bioconductor.org
+    cd app
+
+Run the console:
 
     rails console production
 
