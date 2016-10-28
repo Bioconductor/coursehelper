@@ -123,16 +123,15 @@ Now that an instance has been created, we will use a terminal to update the info
 2. ssh into the instance:  
    ssh -i \<keypair\> ubuntu\@**IP**  
    The \<keypair\> should be the private key matching to the key pair used when launching in the previous section and the **IP** is the copied **IP** address from step 5 of the previous section
-3. Switch to root.  `sudo -s`
-4. Update the information as necessary.  
+3. Update the information as necessary.  
     e.g. clone course material, cd into a course directory and update, if necessary build and install course packages
-5. Make sure all R packages are updated.  
+4. Make sure all R packages are updated.  
     1. `R`
     2. `biocLite()` 
     3. `q()`  Do not save workspace!!* 
-6. `clean_ami`
-7. Exit the ssh instance.
-8. Exit the terminal.
+5. `clean_ami`
+6. Exit the ssh instance.
+7. Exit the terminal.
 
 \* **Note:** If you save the workspace, all rstudio sessions launched with this AMI will have that saved workspaced. In generally it is a better practice to have a clean rstudio session by not saving the workspace and loading libraries and objects as needed when utilizing the AMI.  
 
