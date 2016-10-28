@@ -10,8 +10,9 @@
     - [Update New Instance](#updateInst)
     - [Clone and Clean Up](#cloneNclean)
     - [Testing Rstudio](#testR)
-    - [Adding a course](#addCourse)
-    - [Updating a course](#updateCourse)
+    - [Initializing courses.bioconductor.org](#initCourse)
+    - [Adding a Course](#addCourse)
+    - [Updating a Course](#updateCourse)
 - [End user usage](#userUsage)
 - [Modifying all instances during a course](#modifyDuringCourse)
 - [After a course](#afterCourse)
@@ -155,8 +156,6 @@ Now we must go back to the AWS console.
 8. Select the newly created instance
 9. (optional) Under Actions, Under Instance State, select `Terminate`. If you think you will run the instance again you can leave the instance in a `Stop` state instead of terminating but it is not recommended to leave intermediate AMIs and instances, for cost and space efficiency. You can also restart the instance for testing purposes (see below)
 
-We are now done on the AWS site. 
-
 <a name="testR"></a>
 #### 4. Testing (optional)
 
@@ -166,6 +165,37 @@ To test an rstudio session there are two options:
 
 1. See the previous section on [Launching Existing AMI of Interest](#launchAMI). Once you have the **IP** address, you can copy and paste that **IP** address into a web browser. It should open an rstudio session. 
 2. Alternately, if you still have an instance of the AMI created, you can also go to Instances, Under Instances in the left tool bar and click on the newly created instance. If the instance is in an instant state of `stopped`, go under Actions, under Instant State, and select `Start`. On the bottom of the page there is information about the instance. The **IP** address listed can be copied in a web browser to launch the rstudio session. Don't forget to stop your instance when you are finished.       
+
+<a name="initCourse"></a>
+## Initializing courses.bioconductor.org
+
+Because of space and cost, we do not leave the courses.bioconductor.org AMI running. 
+It therefore will have to be restarted and initialized with a new elastic IP address. 
+
+In the AWS Management Console:
+
+1. On the left tool bar, under Instances, select Instances
+2. Select the Instance names courses.bioconductor.org
+3. Under Actions, Under Instance State, select `Start` and `Yes, Start`
+
+Now a new elastic **IP** needs to be created: 
+
+1 On the left tool bar, under Network & Security, select Elastic IPs
+2. Under Actions, Allocate New Addesss. Change the EIP used to `VPC` and select `Yes, Allocate`
+3. It should give you a confirmation window. In that window select: `View Elastic IP`
+4. With the new Elasic IP Address selected, Under Actions, select `Associate Address`
+5. In Instancee, start typing courses.bioconductor.org and select the appropriate entry, and Click `Associate`
+6. Make note of the **IP** address
+
+Now update courses.bioconductor.org **IP**:
+
+1. At the top of the AWS Management Console, Select Services, and go to `Route 53`
+2. Click on `Hosted Zones` under DNS management
+3. Click on `bioconductor.org` under Domain Name
+4. Find and select `courses.bioconductor.org`
+5. In the window to the right, In the Value section, Delete the listed IP and enter the newly created elastic **IP** address. 
+6. Change TTL (Seconds): to 0
+7. Select `Save Record Set`
 
 <a name="addCourse"></a>
 ## Adding a course
