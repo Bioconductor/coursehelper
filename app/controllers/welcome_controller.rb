@@ -24,24 +24,24 @@ class WelcomeController < ApplicationController
 
     # @courses_happening_now =
     #     Course.where("is_visible is not :false and startdate <= :today and enddate >= :today", {today: Date.today, false: false})
-#    @courses_happening_now = all_courses.find_all do |i|
-#      offset = i.gmt_offset
-#      if offset.nil?
-#        now = DateTime.now
-#        today = Date.today
-#      else
-#        now = local.new_offset(Rational(offset,24))
-#        today = now.to_date
-#      end
-#      unless offset.nil?
+    @courses_happening_now = all_courses.find_all do |i|
+      offset = i.gmt_offset
+      if offset.nil?
+        now = DateTime.now
+        today = Date.today
+      else
+        now = local.new_offset(Rational(offset,24))
+        today = now.to_date
+      end
+      unless offset.nil?
 #        require 'pry';binding.pry
-#      end
-#      if i.startdate <= today and i.enddate >= today
-#        true
-#      else
-#        false
-#      end
-#    end
+      end
+      if i.startdate <= today and i.enddate >= today
+        true
+      else
+        false
+      end
+    end
   end
 
   def get_instance(email, course)
@@ -130,7 +130,7 @@ class WelcomeController < ApplicationController
       Attendee.where(email: email).where(course_id: course.id).find_each do |rec|
         render("get_url_post", locals: {url: "http://#{rec.public_dns}",
           enddate: course.enddate,
-#          shellinabox_url: "http://#{rec.public_dns}:4200"}) and return
+          shellinabox_url: "http://#{rec.public_dns}:4200"}) and return
       end
 
 
@@ -155,7 +155,7 @@ class WelcomeController < ApplicationController
       end
       render("get_url_post", locals: {url: "http://#{rec.public_dns}",
         enddate: course.enddate,
-#        shellinabox_url: "http://#{rec.public_dns}:4200"}) and return
+        shellinabox_url: "http://#{rec.public_dns}:4200"}) and return
     end
   end
 
