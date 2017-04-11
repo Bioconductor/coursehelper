@@ -180,7 +180,7 @@ In the AWS Management Console:
 
 Now a new elastic **IP** needs to be created: 
 
-1. On the left tool bar, under Network & Security, select Elastic IPs
+1 On the left tool bar, under Network & Security, select Elastic IPs
 2. Under Actions, Allocate New Addesss. Change the EIP used to `VPC` and select `Yes, Allocate`
 3. It should give you a confirmation window. In that window select: `View Elastic IP`
 4. With the new Elasic IP Address selected, Under Actions, select `Associate Address`
