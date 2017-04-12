@@ -1,6 +1,6 @@
 <% if @courses_happening_now.nil? or @courses_happening_now.empty? %>
     <p>There are no courses going on now.</p>
 <% else %>
-    <p>Courses currently happening:</p>
+    <p>Currently Available Courses:</p>
     <%= render partial: "course_table", locals: {courses: @courses_happening_now} %>
 <% end %>
