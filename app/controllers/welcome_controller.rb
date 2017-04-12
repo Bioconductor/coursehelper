@@ -36,7 +36,7 @@ class WelcomeController < ApplicationController
       unless offset.nil?
 #        require 'pry';binding.pry
       end
-      if i.startdate <= today and i.enddate >= today
+      if (i.startdate <= today or (today == (i.startdate() -1) and now.hour >= 20)) and i.enddate >= today
         true
       else
         false
