@@ -53,8 +53,13 @@ task :course_shutdown => :environment do
 
     for attendee in attendees
       puts "Shutting down instance for attendee #{attendee.email}."
-      ec2.instances[attendee.instance_id].terminate
-      attendee.destroy
+      begin
+        ec2.instances[attendee.instance_id].terminate
+        attendee.destroy
+      rescue Exception => e
+        puts "ERROR attendee.destroy failed #{attendee.email}."
+        puts e.message
+      end
     end
   end
   puts "Done."
