@@ -79,7 +79,11 @@ It is not enough to simply do `git pull` on production. You also need to
 ## Building or Updating a course AMI 
 
 This is going to assume that instead of directly modifying the existing course AMI that the desired result is to clone the AMI, update it, and add the new `ami_id` to the course. 
-**Remember:** This process may be iterated a number of times depending on how materials evolve or are updated.  It is important to always de-register (delete) intermediate AMIs and terminate intermediate Instances. 
+**Remember:** This process may be iterated a number of times depending on how
+materials evolve or are updated.  It is important to always de-register (delete)
+intermediate AMIs and terminate intermediate Instances. When the course
+completes, terminate Instances, de-register AMIs, and delete any AMI snapshots
+from the course.  
 
 <a name="launchAMI"></a>
 #### 1. Launch Existing AMI Of Interest
@@ -355,6 +359,10 @@ following cron job:
  hour in the course time zone.)
 It works, but you should still doublecheck that it worked so we
 don't have to pay lots of money for unused instances.
+
+It is important when the course completes to: terminate Instances, de-register AMIs, and delete any AMI snapshots
+from the course.  
+
 
 <a name="postMaterials"></a>
 ## Post course materials
