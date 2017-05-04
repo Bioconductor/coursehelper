@@ -95,7 +95,14 @@ Log on to the AWS Management Console at:
 1. Select EC2 (Virtual Servers in the Cloud). 
 2. On the left tool bar, under Images, select AMIs.  
 3. Launch the AMI of Interest. Make sure you have an AMI with the appropriate versions of R and Bioconductor. (See [Bioconductor AMIs](http://bioconductor.org/help/bioconductor-cloud-ami/#ami_ids)).
-**Note:** Before launching, you should have an idea of the [InstanceType](https://aws.amazon.com/ec2/instance-types/) and generally you will want to have a [key pair set up](http://bioconductor.org/help/bioconductor-cloud-ami/#first-time-steps).
+**Note:** Before launching, you should have an idea of the
+[InstanceType](https://aws.amazon.com/ec2/instance-types/) and generally you
+will want to have a [key pair set
+up](http://bioconductor.org/help/bioconductor-cloud-ami/#first-time-steps).
+Note: Becaues of new standards for AWS, there are limits to the number of
+instances per type. We currently have requested an increased limit of 150 for
+the instance type m4.xlarge.  If other types are needed, a limit increase will
+have to be submitted to AWS for approval. 
   
   \>Follow the prompts and after each step select `Next: ...` in the lower right corner
   
