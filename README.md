@@ -161,11 +161,11 @@ Now we must go back to the AWS console.
      Image Name (Best practice is to include time stamp: YearMonthDayTime)  
      Create Image  
      Close  
-5. **Note:** While this creating of AMO is being done please make note of the snapshot that is being
-created as well (left took bar, elastic block store, select snapshots).
-Consider giving the blank name field an identifier that is associated with this
-course as it will have to be deleted later and can be challenging to figure out
-which is associated later.   
+5. **Note:** While the creating of image is being done, please make note of the
+snapshot that is being created as well (left tool bar, elastic block store,
+select snapshots). Consider editing the blank name field to an identifier that
+is associated with this course as it will have to be deleted later and can be
+challenging to figure out which is associated.   
 6. On the left tool bar, under Images, select AMIs
 7. What until the New AMI is done being created, and shows a Status of available. Then copy the `AMI ID` field for that new AMI. If updating a previously existing course, this `ami_id` should be used when [Updating a course](#updateCourse)
 8. On the left tool bar, go back to Instances, Instances 
