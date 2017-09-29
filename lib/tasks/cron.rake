@@ -31,6 +31,14 @@ task :course_shutdown => :environment do
       now = local.new_offset(Rational(offset,24))
       today = now.to_date
     end
+#####################################################################
+#
+# Change this for hour when instances started from course are killed
+#   cron job runs at hour:55  to run soon than 55min past hour
+#   change cronjob
+#
+#####################################################################
+#if now.hour == 9 and i.enddate == today
     if now.hour == 23 and i.enddate == today
       true
     else
