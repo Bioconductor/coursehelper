@@ -61,6 +61,31 @@ class WelcomeController < ApplicationController
     else
       region = course.region
     end
+
+   ## select subnet
+    if config.has_key? "subnet"
+      subnet = config['subnet']
+      index = 0
+      loop do
+        if index >= subnet.length
+            break
+        end
+
+        cumulative_subnet_instances = 0
+        (0..index).each do |i|
+          cumulative_subnet_instances += subnet[i][:max]
+        end
+
+        if cumulative_subnet_instances < courses.max_instances
+          options[:subnet] = subnet[index][:net]
+          break
+        else
+          index +=1
+        end
+      end
+    end
+
+    ## bind options and launch
     ec2 = AWS::EC2.new(:region => region,
       :access_key_id => config['access_key_id'],
       :secret_access_key => config['secret_access_key'])
@@ -70,9 +95,6 @@ class WelcomeController < ApplicationController
         count: 1, key_name: config['key_pair'],
         security_groups: config['security_group']
     }
-    if config.has_key? "subnet"
-      options[:subnet] = config['subnet']
-    end
     instance = ec2.instances.create(options)
     instance.tag('Name', value: "Attending '#{course.title}', #{course.location}, #{course.startdate}-#{course.enddate} (#{email})")
     instance.tag("Email", value: email)
