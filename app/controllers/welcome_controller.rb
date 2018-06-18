@@ -62,27 +62,42 @@ class WelcomeController < ApplicationController
       region = course.region
     end
 
-   ## select subnet
+    ## select subnet
+    Rails.logger.info "selecting subnet"
     if config.has_key? "subnet"
-      subnet = config['subnet']
-      index = 0
+      subnet = nil
+      sub_array = config['subnet']
+      subnet_index = 0
+      cumulative_subnet_slots = 0
       loop do
-        if index >= subnet.length
-            break
+        Rails.logger.info "in subnet loop"
+        if subnet_index >= sub_array.length
+          Rails.logger.info "break out of subnet loop"
+          break
         end
 
-        cumulative_subnet_instances = 0
-        (0..index).each do |i|
-          cumulative_subnet_instances += subnet[i][:max]
-        end
+        sub_hash = sub_array[subnet_index]
+        cumulative_subnet_slots += sub_hash['max']
 
-        if cumulative_subnet_instances < courses.max_instances
-          options[:subnet] = subnet[index][:net]
+        current_instances = Attendee.where(course_id: course.id).length
+        Rails.logger.info "cumulative_subnet_slots: #{cumulative_subnet_slots}"
+        Rails.logger.info "current_instances: #{current_instances}"
+        Rails.logger.info "course.max: #{course.max_instances}"
+        if cumulative_subnet_slots == current_instances
+          raise "Max number of instances have been launched. "\
+                "Numbers can be increased by modifying the config file."
+        end
+        if cumulative_subnet_slots <= course.max_instances &&
+           cumulative_subnet_slots > current_instances
+          subnet = sub_hash['net']
+          Rails.logger.info "select subnet: #{subnet}"
           break
         else
-          index +=1
+          subnet_index +=1
         end
       end
+    else
+      render(text: "no subnet specified in config.yml") and return
     end
 
     ## bind options and launch
@@ -91,9 +106,10 @@ class WelcomeController < ApplicationController
       :secret_access_key => config['secret_access_key'])
     options = {
       image_id: course.ami_id,
-        instance_type: course.instance_type,
-        count: 1, key_name: config['key_pair'],
-        security_groups: config['security_group']
+      instance_type: course.instance_type,
+      count: 1, key_name: config['key_pair'],
+      security_groups: config['security_group'],
+      subnet: subnet
     }
     instance = ec2.instances.create(options)
     instance.tag('Name', value: "Attending '#{course.title}', #{course.location}, #{course.startdate}-#{course.enddate} (#{email})")
@@ -169,7 +185,11 @@ class WelcomeController < ApplicationController
       rec = Attendee.where(email: email).where(course_id: course.id).first
       instance = nil
       if rec.nil?
-        instance = get_instance(email, course)
+        begin
+          instance = get_instance(email, course)
+        rescue Exception => e
+          render(:text => "#{e.message}") and return
+        end
         dns = (instance.public_dns_name.nil?) ? instance.public_ip_address : instance.public_dns_name
         rec = Attendee.create(email: email, course_id: course.id, instance_id: instance.instance_id,
           public_dns: dns)
