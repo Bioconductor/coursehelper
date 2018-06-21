@@ -13,6 +13,7 @@
     - [Initializing courses.bioconductor.org](#initCourse)
     - [Adding a Course](#addCourse)
     - [Updating a Course](#updateCourse)
+    - [Configuration of AMI Launch Parameters](#config)
 - [End user usage](#userUsage)
 - [Modifying all instances during a course](#modifyDuringCourse)
 - [After a course](#afterCourse)
@@ -107,7 +108,7 @@ Log on to the AWS Management Console at:
 [InstanceType](https://aws.amazon.com/ec2/instance-types/) and generally you
 will want to have a [key pair set
 up](http://bioconductor.org/help/bioconductor-cloud-ami/#first-time-steps).
-Note: Becaues of new standards for AWS, there are limits to the number of
+Note: Because of new standards for AWS, there are limits to the number of
 instances per type. We currently have requested an increased limit of 150 for
 the instance type m4.xlarge.  If other types are needed, a limit increase will
 have to be submitted to AWS for approval.
@@ -123,8 +124,8 @@ have to be submitted to AWS for approval.
        If utilizing similar naming to previous AMI, it acts as an internal time stamp.
     5. Security. Under `Assign a security group:` choose `Select an existing security group`
        Especially when setting up for a course or workshop, Select the following items:
-	 1. name: `http-to-the-world` description: `port 80 open to world` (this is needed by rstudio)
-	 2. name: `ssh` description: `ips that are allowed to ssh to instances`
+	 1. name: `http/s-open` (rstudio requires port 80 to be open
+	 2. name: `ssh-open`
     6. Review and Launch.
        Generally, launch with existing key pair.
        You should have access to the private key associated with the public key pair selected.
@@ -153,7 +154,7 @@ Now that an instance has been created, we will use a terminal to update the info
 6. Exit the ssh instance.
 7. Exit the terminal.
 
-\* **Note:** If you save the workspace, all rstudio sessions launched with this AMI will have that saved workspaced. In generally it is a better practice to have a clean rstudio session by not saving the workspace and loading libraries and objects as needed when utilizing the AMI.
+\* **Note:** If you save the workspace, all rstudio sessions launched with this AMI will have that saved workspace. In generally it is a better practice to have a clean rstudio session by not saving the workspace and loading libraries and objects as needed when utilizing the AMI.
 
 <a name="cloneNclean"></a>
 #### 3. Clone and Clean Up
@@ -273,6 +274,7 @@ that's where most courses used to be taught.
 
 Note that there is also a `region` parameter which you can
 set to an [AWS region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html).
+
 If the course is to be taught in a far-flung region
 like Australia or Japan, this will mean the instances will
 be started in a region closer to the attendees so
@@ -287,7 +289,13 @@ This feature has **not** been extensively tested so you
 should confirm it works before using it, perhaps by creating
 a dummy course.
 
+The default region is 'us-east-1'. Currently there is no cross-check between
+the region and the subnets supplied in config.yml. If you do change the region
+to something other than 'us-east-1', confirm there are subnets for the
+desired availability zones and make the necessary changes in config.yml.
+
 <a name="updateCourse"></a>
+
 ## Updating a course
 
 Again, assuming you are on courses.bioconductor.org:
@@ -317,6 +325,80 @@ Once you have retrieved the course, you can modify it and then resave it:
     course.ami_id = "ami-44332211"
     course.save
     exit
+
+<a name="config"></a>
+## Configuration of AMI Launch Parameters
+
+The configuration file at /var/www/app/config.yml on courses.bioconductor.org
+contains AWS credentials and options passed to the AMI launch script.
+
+* security groups
+
+The AWS security groups should open ports 22 (SSH) and 80 (http for RStudio).
+These groups must exist in the AWS account at
+
+https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#SecurityGroups:sort=tag:Name
+
+The current groups are called `ssh-open` and `http/s-open and are specified in
+config.yml as an array:
+
+    security_group:
+     - ssh-open
+     - http/s-open
+
+* region
+
+The region in which to launch the AMIs can be specified in the config.yml. 
+If none is given, 'us-east-1' is used by default.
+
+In config.yml:
+
+    region: us-east-1
+
+NOTE: If a region other than 'us-east-1' is used make sure there are
+ample subnets available.
+
+* subnets
+
+Our AWS subnets are currently allocated as one per Availability Zone.
+Each Availability Zone can be thought of as a data center - a physical
+storage location with hardware.
+
+AWS sets limits on the number of instances (by type) that can be launched
+in each region. Our account may have an ample limit for the number
+of instances but there are still physical limitations on the number of 
+(especially large) instances that can be launched per Availability Zone
+(aka data center). Whether or not we hit this limit when trying to 
+launch instances depends on how busy the Availability Zone is at that time.
+
+To reduce the chances of being denyed a launch, we can allocate instances
+across available subnets. If one or more subnets are specified in the
+config.yml only those are used as 'available subnets'.  If no subnets are given
+in config.yml the AWS account is queried for all available subnets in the
+region and all subnets are used as 'available subnets'. 
+
+When there is a request to launch an instance, the available subnets are
+queried for the number of available IPs in their CIDR block. The instance is
+launched into the subnet with the most available IPs. That launch then reduces
+the available IPs by one in that subnet. On the next request the subnets are
+queried again; the subnet with the most availalbe IPs may be the same or
+different.  This approach launches course instances across the subnets in a
+balanced fashion that respects the load of our own (i.e., non-course)
+instances.
+
+For example, if one subnet is specified in config.yml, all instances will be 
+launched into that subnet:
+
+subnet:
+  - subnet-87ee68f0
+
+If multiple are specified, the instances are distributed over the subnets
+according to the number of IPs available.
+
+subnet:
+  - subnet-87ee68f0
+  - subnet-8bd210a0
+  - subnet-d66a05ec
 
 <a name="userUsage"></a>
 ## End user usage

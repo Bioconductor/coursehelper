@@ -52,6 +52,9 @@ class WelcomeController < ApplicationController
 
   def get_instance(email, course)
     config = YAML.load_file("#{Rails.root}/config.yml")
+
+    # region
+    Rails.logger.info "define region"
     if course.region.nil?
       if config.has_key? 'region'
         region = config['region']
@@ -62,45 +65,32 @@ class WelcomeController < ApplicationController
       region = course.region
     end
 
-    ## select subnet
-    Rails.logger.info "selecting subnet"
+    # possible subnets
+    Rails.logger.info "define subnet"
+    subnet_hash = Hash.new
+
+    ec2 = Aws::EC2::Client.new(
+      :region => region,
+      :access_key_id => config['access_key_id'],
+      :secret_access_key => config['secret_access_key'])
+    all_subnets = ec2.describe_subnets()
+
+    Rails.logger.info "all_subnets: #{all_subnets}"
+    all_subnets.subnets.each do |x|
+      subnet_hash[:"#{x.subnet_id}"] = "#{x.available_ip_address_count}".to_i 
+    end
     if config.has_key? "subnet"
-      subnet = nil
-      sub_array = config['subnet']
-      subnet_index = 0
-      cumulative_subnet_slots = 0
-      loop do
-        Rails.logger.info "in subnet loop"
-        if subnet_index >= sub_array.length
-          Rails.logger.info "break out of subnet loop"
-          break
-        end
-
-        sub_hash = sub_array[subnet_index]
-        cumulative_subnet_slots += sub_hash['max']
-
-        current_instances = Attendee.where(course_id: course.id).length
-        Rails.logger.info "cumulative_subnet_slots: #{cumulative_subnet_slots}"
-        Rails.logger.info "current_instances: #{current_instances}"
-        Rails.logger.info "course.max: #{course.max_instances}"
-        if cumulative_subnet_slots == current_instances
-          raise "Max number of instances have been launched. "\
-                "Numbers can be increased by modifying the config file."
-        end
-        if cumulative_subnet_slots <= course.max_instances &&
-           cumulative_subnet_slots > current_instances
-          subnet = sub_hash['net']
-          Rails.logger.info "select subnet: #{subnet}"
-          break
-        else
-          subnet_index +=1
-        end
-      end
-    else
-      render(text: "no subnet specified in config.yml") and return
+      Rails.logger.info "get subnets from config.yml"
+      ids = config['subnet']
+      ids = ids.map { |x| x.to_sym }
+      subnet_hash = subnet_hash.slice(*ids)
     end
 
-    ## bind options and launch
+    # select subnet with max IPs available
+    # (returns single value in case of tie) 
+    subnet = subnet_hash.max_by{|k, v| v}[0].to_s
+
+    # bind options and launch
     ec2 = AWS::EC2.new(:region => region,
       :access_key_id => config['access_key_id'],
       :secret_access_key => config['secret_access_key'])
