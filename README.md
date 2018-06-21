@@ -367,10 +367,11 @@ storage location with hardware.
 
 AWS sets limits on the number of instances (by type) that can be launched
 in each region. Our account may have an ample limit for the number
-of instances but there are still physical limitations on the number of 
-(especially large) instances that can be launched per Availability Zone
-(aka data center). Whether or not we hit this limit when trying to 
-launch instances depends on how busy the Availability Zone is at that time.
+of instances to launch per region but there are still physical limitations 
+on the number of instances (especially large ones) that can be launched per 
+Availability Zone (in our case translates to subnet). Whether or not we hit 
+this limit when trying to launch instances depends on how busy the Availability 
+Zone is at that time.
 
 To reduce the chances of being denyed a launch, we can allocate instances
 across available subnets. If one or more subnets are specified in the
