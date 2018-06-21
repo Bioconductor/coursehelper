@@ -333,7 +333,6 @@ The configuration file at /var/www/app/config.yml on courses.bioconductor.org
 contains AWS credentials and options passed to the AMI launch script.
 
 * security groups
-
 The AWS security groups should open ports 22 (SSH) and 80 (http for RStudio).
 These groups must exist in the AWS account at
 
@@ -347,7 +346,6 @@ config.yml as an array:
      - http/s-open
 
 * region
-
 The region in which to launch the AMIs can be specified in the config.yml. 
 If none is given, 'us-east-1' is used by default.
 
@@ -360,7 +358,6 @@ security groups exist in that region and there are sufficient subnets
 available.
 
 * subnets
-
 Our AWS subnets are currently allocated as one per Availability Zone.
 Each Availability Zone can be thought of as a data center - a physical
 storage location with hardware.
