@@ -391,16 +391,16 @@ instances.
 For example, if one subnet is specified in config.yml, all instances will be 
 launched into that subnet:
 
-subnet:
-  - subnet-87ee68f0
+    subnet:
+      - subnet-87ee68f0
 
 If multiple are specified, the instances are distributed over the subnets
 according to the number of IPs available.
 
-subnet:
-  - subnet-87ee68f0
-  - subnet-8bd210a0
-  - subnet-d66a05ec
+    subnet:
+      - subnet-87ee68f0
+      - subnet-8bd210a0
+      - subnet-d66a05ec
 
 <a name="userUsage"></a>
 ## End user usage
