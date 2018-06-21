@@ -355,8 +355,9 @@ In config.yml:
 
     region: us-east-1
 
-NOTE: If a region other than 'us-east-1' is used make sure there are
-ample subnets available.
+NOTE: If a region other than 'us-east-1' is used, make sure the necessary
+security groups exist in that region and there are sufficient subnets 
+available.
 
 * subnets
 
