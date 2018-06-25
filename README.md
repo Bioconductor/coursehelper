@@ -194,33 +194,13 @@ To test an rstudio session there are two options:
 <a name="initCourse"></a>
 ## Initializing courses.bioconductor.org
 
-Because of space and cost, we do not leave the courses.bioconductor.org AMI running.
-It therefore will have to be restarted and initialized with a new elastic IP address.
-
-In the AWS Management Console:
-
-1. On the left tool bar, under Instances, select Instances
-2. Select the Instance names courses.bioconductor.org
-3. Under Actions, Under Instance State, select `Start` and `Yes, Start`
-
-Now a new elastic **IP** needs to be created:
-
-1. On the left tool bar, under Network & Security, select Elastic IPs
-2. Under Actions, Allocate New Addesss. Change the EIP used to `VPC` and select `Yes, Allocate`
-3. It should give you a confirmation window. In that window select: `View Elastic IP`
-4. With the new Elasic IP Address selected, Under Actions, select `Associate Address`
-5. In Instancee, start typing courses.bioconductor.org and select the appropriate entry, and Click `Associate`
-6. Make note of the **IP** address
-
-Now update courses.bioconductor.org **IP**:
-
-1. At the top of the AWS Management Console, Select Services, and go to `Route 53`
-2. Click on `Hosted Zones` under DNS management
-3. Click on `bioconductor.org` under Domain Name
-4. Find and select `courses.bioconductor.org`
-5. In the window to the right, In the Value section, Delete the listed IP and enter the newly created elastic **IP** address.
-6. Change TTL (Seconds): to 0
-7. Select `Save Record Set`
+Because the sole purpose of courses.bioconductor.org is to manage courses,
+there is no need to have it up 24-7. When there is no course, the instance
+should be stopped (not terminated). It therefore will have to be restarted when
+you need to add a new course. The instance has an elastic IP which replaces the
+instance's public IPv4 address. An elastic IP is persistent through instance
+stops / starts so there is no need to reassign an new elastic IP when the
+instance re-started.
 
 <a name="addCourse"></a>
 ## Adding a course
