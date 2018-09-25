@@ -122,10 +122,18 @@ have to be submitted to AWS for approval.
     4. Tag Instance. Select a Name and Value for the instance.
        Generally a good practice to also include the date: YearMonthDayTime.
        If utilizing similar naming to previous AMI, it acts as an internal time stamp.
-    5. Security. Under `Assign a security group:` choose `Select an existing security group`
-       Especially when setting up for a course or workshop, Select the following items:
-	 1. name: `http/s-open` (rstudio requires port 80 to be open
-	 2. name: `ssh-open`
+    5. Security. 
+       Under `Assign a security group:` choose `Select an existing security group`
+       When setting up for a course or workshop, Select the 'courses'
+       security group. This dedicated group was created to enable 
+       on-the-fly changes that would propagate to all instances during a 
+       conference or course without affecting other EC2 core instances.
+ 
+       The 'courses' security group opens port 80 for RStudio and port 22 for
+       SSH access. Other ports may be open such as 443 (currently not used) or
+       ports for serving another web-based application such as Jupyter
+       notebooks.
+
     6. Review and Launch.
        Generally, launch with existing key pair.
        You should have access to the private key associated with the public key pair selected.
