@@ -50,10 +50,6 @@ GEM
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     builder (3.2.2)
-    byebug (3.5.1)
-      columnize (~> 0.8)
-      debugger-linecache (~> 1.2)
-      slop (~> 3.6)
     coderay (1.1.0)
     coffee-rails (4.1.0)
       coffee-script (>= 2.2.0)
@@ -62,9 +58,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.9.0)
-    columnize (0.9.0)
     debug_inspector (0.0.2)
-    debugger-linecache (1.2.0)
     erubis (2.7.0)
     execjs (2.2.2)
     globalid (0.3.0)
@@ -157,11 +151,11 @@ GEM
       libv8 (~> 3.16.14.0)
       ref
     thor (0.19.1)
-    thread_safe (0.3.4)
+    thread_safe (0.3.6)
     tilt (1.4.1)
     turbolinks (2.5.3)
       coffee-rails
-    tzinfo (1.2.2)
+    tzinfo (1.2.10)
       thread_safe (~> 0.1)
     uglifier (2.7.0)
       execjs (>= 0.3.0)
@@ -178,7 +172,6 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk
   aws-sdk-core
-  byebug
   coffee-rails (~> 4.1.0)
   jbuilder (~> 2.0)
   jquery-rails
